@@ -368,12 +368,36 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="🧠 Changing the Model">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#jan-ai-models-default" class="md-nav__link">
+    <span class="md-ellipsis">
+      Jan AI Models (Default)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ollama-models" class="md-nav__link">
+    <span class="md-ellipsis">
+      Ollama Models
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
   <a href="#modifying-the-system-prompt" class="md-nav__link">
     <span class="md-ellipsis">
-      📝 Modifying the system Prompt
+      📝 Modifying the System Prompt
     </span>
   </a>
   
@@ -480,12 +504,36 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="🧠 Changing the Model">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#jan-ai-models-default" class="md-nav__link">
+    <span class="md-ellipsis">
+      Jan AI Models (Default)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ollama-models" class="md-nav__link">
+    <span class="md-ellipsis">
+      Ollama Models
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
   <a href="#modifying-the-system-prompt" class="md-nav__link">
     <span class="md-ellipsis">
-      📝 Modifying the system Prompt
+      📝 Modifying the System Prompt
     </span>
   </a>
   
@@ -532,10 +580,28 @@
 <p>This Blueprint is designed to be flexible and easily adaptable to your specific needs. This guide will walk you through some key areas you can customize to make the Blueprint your own.</p>
 <hr />
 <h2 id="changing-the-model">🧠 <strong>Changing the Model</strong></h2>
-<h2 id="modifying-the-system-prompt">📝 <strong>Modifying the system Prompt</strong></h2>
+<p>You can customize the AI models used by AI Commit:</p>
+<h3 id="jan-ai-models-default">Jan AI Models (Default)</h3>
+<p>Set your preferred Jan AI model using the environment variable:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nb">export</span><span class="w"> </span><span class="nv">JAN_MODEL</span><span class="o">=</span><span class="s2">&quot;llama 3.1&quot;</span><span class="w">  </span><span class="c1"># or any other model you&#39;ve downloaded</span>
+</span></code></pre></div>
+<h3 id="ollama-models">Ollama Models</h3>
+<p>Set your preferred Ollama model using the environment variable:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="nb">export</span><span class="w"> </span><span class="nv">OLLAMA_MODEL</span><span class="o">=</span><span class="s2">&quot;llama3.1&quot;</span><span class="w">  </span><span class="c1"># or any other model you&#39;ve pulled</span>
+</span></code></pre></div>
+<h2 id="modifying-the-system-prompt">📝 <strong>Modifying the System Prompt</strong></h2>
+<p>You can customize the prompt sent to the AI models by modifying the <code>generate_commit_messages</code> function in the <code>commit_generator.py</code> file. This allows you to:</p>
+<ul>
+<li>Change the number of commit messages generated</li>
+<li>Adjust the style or format of the messages</li>
+<li>Add specific guidelines for your team's commit message standards</li>
+</ul>
 <h2 id="other-customization-ideas">💡 Other Customization Ideas</h2>
 <ul>
-<li>other ideas..</li>
+<li>Add support for additional AI providers</li>
+<li>Implement commit message templates</li>
+<li>Add integration with commit hooks</li>
+<li>Create organization-specific formatting rules</li>
 </ul>
 <h2 id="contributing-to-the-blueprint">🤝 <strong>Contributing to the Blueprint</strong></h2>
 <p>Want to help improve or extend this Blueprint? Check out the <strong><a href="../future-features-contributions/">Future Features &amp; Contributions Guide</a></strong> to see how you can contribute your ideas, code, or feedback to make this Blueprint even better!</p>
