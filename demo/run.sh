@@ -20,7 +20,10 @@ stopRunningProcess() {
 
 trap stopRunningProcess EXIT TERM
 
-streamlit run ${HOME}/document-to-podcast/demo/app.py &
+# Add streamlit to dependencies for the demo
+pip install streamlit
+
+streamlit run ${HOME}/blueprint/demo/app.py &
 APP_ID=${!}
 
 wait ${APP_ID}

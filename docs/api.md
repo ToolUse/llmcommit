@@ -1,3 +1,13 @@
 # API Reference
 
-"::: blueprint.hello"
+## AI Service Module
+
+::: blueprint.ai_service
+
+## Commit Generator Module
+
+::: blueprint.commit_generator
+
+## CLI Module
+
+::: blueprint.cli
