@@ -38,4 +38,4 @@ namespaces = false
 [tool.setuptools_scm]
 
 [project.scripts]
-lcg = "blueprint.cli:main"
+lcm = "blueprint.cli:main"

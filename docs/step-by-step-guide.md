@@ -16,7 +16,7 @@ The process follows these steps:
 
 ## **Step 1: Extracting the Git Diff**
 
-When you run `lcg`, the tool first tries to get the staged changes using `git diff --cached`. If there are no staged changes, it falls back to unstaged changes using `git diff`. This ensures that the AI model sees only the relevant changes you want to commit.
+When you run `lcm`, the tool first tries to get the staged changes using `git diff --cached`. If there are no staged changes, it falls back to unstaged changes using `git diff`. This ensures that the AI model sees only the relevant changes you want to commit.
 
 The diff is limited to 5000 characters to avoid overwhelming the AI model and to respect the context windows of various models.
 

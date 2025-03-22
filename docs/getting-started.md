@@ -66,7 +66,7 @@ pip install -e .
 1. Make changes to your files in a git repository
 2. Run:
    ```bash
-   lcg
+   lcm
    ```
 3. Select one of the generated commit messages using the arrow keys or number keys
 4. Press Enter to commit with the selected message, or Esc to cancel
@@ -75,19 +75,19 @@ pip install -e .
 
 ```bash
 # Use Ollama instead of Jan AI
-lcg --ollama
+lcm --ollama
 
 # Show performance analytics
-lcg --analytics
+lcm --analytics
 
 # Use vim-style navigation in fzf
-lcg --vim
+lcm --vim
 
 # Use number selection for messages
-lcg --num
+lcm --num
 
 # Set the maximum characters for commit messages
-lcg --max_chars 100
+lcm --max_chars 100
 ```
 
 ## What's Next?

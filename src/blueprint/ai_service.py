@@ -116,7 +116,7 @@ class AIService:
         data = {
             "model": self.model,
             "messages": [{"role": "user", "content": prompt}],
-            "temperature": 0.7,
+            "temperature": 0.01,
         }
 
         self.logger.debug(f"Sending request to Jan AI API at {url}")

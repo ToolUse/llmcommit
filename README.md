@@ -49,13 +49,13 @@ This blueprint guides you to easily generate AI-powered git commit messages base
 4. After adding your changes to your git repo, run:
 
    ```bash
-   lcg
+   lcm
    ```
 
    For Ollama, use:
 
    ```bash
-   lcg --ollama
+   lcm --ollama
    ```
 
 ## How it Works
