@@ -16,7 +16,7 @@
       
       
       <link rel="icon" href="../images/Blueprint-logo-black-flavicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.7">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.9">
     
     
       
@@ -24,7 +24,7 @@
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/main.8608ea7d.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.4af4bdda.min.css">
       
         
         <link rel="stylesheet" href="../assets/stylesheets/palette.06af60db.min.css">
@@ -74,7 +74,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#step-by-step-guide-how-ai-commit-works" class="md-skip">
+        <a href="#step-by-step-guide-how-llm-commit-generator-works" class="md-skip">
           Skip to content
         </a>
       
@@ -600,10 +600,10 @@
   
 
 
-<h1 id="step-by-step-guide-how-ai-commit-works"><strong>Step-by-Step Guide: How AI Commit Works</strong></h1>
-<p>This guide explains exactly how AI Commit works, from extracting your git diff to generating commit messages and allowing you to select the best one.</p>
+<h1 id="step-by-step-guide-how-llm-commit-generator-works"><strong>Step-by-Step Guide: How LLM Commit Generator Works</strong></h1>
+<p>This guide explains exactly how LLM Commit Generator works, from extracting your git diff to generating commit messages and allowing you to select the best one.</p>
 <h2 id="overview"><strong>Overview</strong></h2>
-<p>AI Commit is a tool that leverages large language models to automatically generate meaningful git commit messages based on your code changes. It uses Jan AI by default for local inference, with Ollama as an alternative option, giving you flexibility while keeping your data private.</p>
+<p>LLM Commit Generator is a tool that leverages large language models to automatically generate meaningful git commit messages based on your code changes. It uses Jan AI by default for local inference, with Ollama as an alternative option, giving you flexibility while keeping your data private.</p>
 <p>The process follows these steps:</p>
 <ol>
 <li>Extract git diff from your repository</li>
@@ -613,7 +613,7 @@
 <li>Create a git commit with your selected message</li>
 </ol>
 <h2 id="step-1-extracting-the-git-diff"><strong>Step 1: Extracting the Git Diff</strong></h2>
-<p>When you run <code>ai-commit</code>, the tool first tries to get the staged changes using <code>git diff --cached</code>. If there are no staged changes, it falls back to unstaged changes using <code>git diff</code>. This ensures that the AI model sees only the relevant changes you want to commit.</p>
+<p>When you run <code>lcg</code>, the tool first tries to get the staged changes using <code>git diff --cached</code>. If there are no staged changes, it falls back to unstaged changes using <code>git diff</code>. This ensures that the AI model sees only the relevant changes you want to commit.</p>
 <p>The diff is limited to 5000 characters to avoid overwhelming the AI model and to respect the context windows of various models.</p>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span><span class="w"> </span><span class="nf">get_git_diff</span><span class="p">(</span><span class="n">max_chars</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">5000</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="k">try</span><span class="p">:</span>
@@ -648,9 +648,9 @@
 <li>Press Esc to cancel and write your own message</li>
 </ul>
 <h2 id="step-4-creating-the-commit"><strong>Step 4: Creating the Commit</strong></h2>
-<p>After selecting a message, AI Commit uses <code>git commit -m "your selected message"</code> to create the commit with your chosen message.</p>
+<p>After selecting a message, LLM Commit Generator uses <code>git commit -m "your selected message"</code> to create the commit with your chosen message.</p>
 <h2 id="architecture"><strong>Architecture</strong></h2>
-<p>AI Commit is organized into several modules:</p>
+<p>LLM Commit Generator is organized into several modules:</p>
 <ul>
 <li><code>ai_service.py</code>: Handles communication with AI providers (Jan AI/Ollama)</li>
 <li><code>commit_generator.py</code>: Core functions for generating and parsing commit messages</li>
