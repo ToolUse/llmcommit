@@ -4,6 +4,7 @@ import argparse
 import os
 import sys
 import time
+import logging
 
 from blueprint.commit_generator import (
     get_git_diff,
@@ -14,6 +15,16 @@ from blueprint.commit_generator import (
 
 DEFAULT_OLLAMA_MODEL = "llama3.1"
 DEFAULT_JAN_MODEL = "llama3.1-8b-instruct"
+
+
+def setup_logging(debug_mode):
+    """Set up logging based on debug mode."""
+    log_level = logging.DEBUG if debug_mode else logging.INFO
+    logging.basicConfig(
+        level=log_level,
+        format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+        datefmt="%Y-%m-%d %H:%M:%S",
+    )
 
 
 def main():
@@ -44,25 +55,35 @@ def main():
         default=75,
         help="Suggested maximum number of characters for each commit message (default: 75)",
     )
+    parser.add_argument("--debug", action="store_true", help="Enable debug logging")
     args = parser.parse_args()
+
+    # Set up logging
+    setup_logging(args.debug)
+    logger = logging.getLogger(__name__)
+    logger.debug("Debug mode enabled")
 
     # Start timing
     start_time = time.time()
 
     # Get git diff
-    diff = get_git_diff()
+    logger.debug("Getting git diff")
+    diff = get_git_diff(debug=args.debug)
     if not diff:
+        logger.error("No changes to commit")
         print("No changes to commit.")
         sys.exit(0)
 
     # Generate commit messages
     service_type = "ollama" if args.ollama else "jan"
+    logger.debug(f"Generating commit messages using {service_type}")
     commit_messages = generate_commit_messages(
         diff=diff,
         max_chars=args.max_chars,
         service_type=service_type,
         ollama_model=OLLAMA_MODEL,
         jan_model=JAN_MODEL,
+        debug=args.debug,
     )
 
     # Stop timing for initial generation
@@ -80,18 +101,20 @@ def main():
 
     # Check if we have messages
     if not commit_messages:
+        logger.error("Could not generate commit messages")
         print("Error: Could not generate commit messages.")
         sys.exit(1)
 
     # Select message or regenerate
     while True:
         selected_message = select_message_with_fzf(
-            commit_messages, use_vim=args.vim, use_num=args.num
+            commit_messages, use_vim=args.vim, use_num=args.num, debug=args.debug
         )
 
         if selected_message == "regenerate":
             # Time regeneration
             start_time = time.time()
+            logger.debug("Regenerating commit messages")
 
             commit_messages = generate_commit_messages(
                 diff=diff,
@@ -99,6 +122,7 @@ def main():
                 service_type=service_type,
                 ollama_model=OLLAMA_MODEL,
                 jan_model=JAN_MODEL,
+                debug=args.debug,
             )
 
             end_time = time.time()
@@ -111,12 +135,15 @@ def main():
                 print("")  # Add a blank line for better readability
 
             if not commit_messages:
+                logger.error("Could not regenerate commit messages")
                 print("Error: Could not generate commit messages.")
                 sys.exit(1)
         elif selected_message:
-            create_commit(selected_message)
+            logger.debug(f"Creating commit with message: {selected_message}")
+            create_commit(selected_message, debug=args.debug)
             break
         else:
+            logger.debug("Commit messages rejected")
             print("Commit messages rejected. Please create commit message manually.")
             break
 

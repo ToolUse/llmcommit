@@ -1,7 +1,7 @@
 """AI Service module for interacting with different LLM providers."""
 
 from typing import Optional
-
+import logging
 import requests
 
 JAN_BASE_URL = "http://localhost:1337/v1/chat/completions"
@@ -11,15 +11,20 @@ OLLAMA_BASE_URL = "http://localhost:11434/api/generate"
 class AIService:
     """Service for interacting with different AI providers."""
 
-    def __init__(self, service_type: str, model: Optional[str] = None):
+    def __init__(
+        self, service_type: str, model: Optional[str] = None, debug: bool = False
+    ):
         """Initialize AI service.
 
         Args:
             service_type: Type of AI service ('ollama' or 'jan')
             model: Model name to use
+            debug: Whether to enable debug logging
         """
         self.service_type = service_type
         self.model = model
+        self.debug = debug
+        self.logger = logging.getLogger(__name__)
 
         # Set up base URLs for services
         self.base_urls = {
@@ -28,7 +33,12 @@ class AIService:
         }
 
         if service_type not in self.base_urls:
+            self.logger.error(f"Unsupported service type: {service_type}")
             raise ValueError(f"Unsupported service type: {service_type}")
+
+        self.logger.debug(
+            f"Initialized AIService with {service_type} and model {model}"
+        )
 
     def query(self, prompt: str) -> str:
         """Query the AI service with the given prompt.
@@ -47,6 +57,7 @@ class AIService:
         elif self.service_type == "jan":
             return self._query_jan(prompt)
         else:
+            self.logger.error(f"Unsupported service type: {self.service_type}")
             raise ValueError(f"Unsupported service type: {self.service_type}")
 
     def _query_ollama(self, prompt: str) -> str:
@@ -61,11 +72,31 @@ class AIService:
         url = self.base_urls["ollama"]
         data = {"model": self.model, "prompt": prompt, "stream": False}
 
+        self.logger.debug(f"Sending request to Ollama API at {url}")
+        if self.debug:
+            self.logger.debug(f"Request data: {data}")
+
         try:
+            self.logger.debug("Making POST request to Ollama API")
             response = requests.post(url, json=data)
+            self.logger.debug(
+                f"Received response with status code: {response.status_code}"
+            )
+
+            if self.debug:
+                self.logger.debug(f"Response headers: {response.headers}")
+
             response.raise_for_status()
-            return response.json().get("response", "")
+            result = response.json()
+
+            if not result.get("response"):
+                self.logger.error(f"Unexpected response format from Ollama: {result}")
+                if self.debug:
+                    self.logger.debug(f"Full response: {result}")
+
+            return result.get("response", "")
         except Exception as e:
+            self.logger.error(f"Error querying Ollama API: {e}")
             raise Exception(f"Error querying Ollama API: {e}")
 
     def _query_jan(self, prompt: str) -> str:
@@ -88,9 +119,31 @@ class AIService:
             "temperature": 0.7,
         }
 
+        self.logger.debug(f"Sending request to Jan AI API at {url}")
+        if self.debug:
+            self.logger.debug(f"Request data: {data}")
+
         try:
+            self.logger.debug("Making POST request to Jan AI API")
             response = requests.post(url, headers=headers, json=data)
+            self.logger.debug(
+                f"Received response with status code: {response.status_code}"
+            )
+
+            if self.debug:
+                self.logger.debug(f"Response headers: {response.headers}")
+
             response.raise_for_status()
-            return response.json()["choices"][0]["message"]["content"]
+            result = response.json()
+
+            if not result.get("choices") or not result["choices"][0].get("message"):
+                self.logger.error(f"Unexpected response format from Jan AI: {result}")
+                if self.debug:
+                    self.logger.debug(f"Full response: {result}")
+                return ""
+
+            content = result["choices"][0]["message"]["content"]
+            return content
         except Exception as e:
+            self.logger.error(f"Error querying Jan AI API: {e}")
             raise Exception(f"Error querying Jan AI API: {e}")
