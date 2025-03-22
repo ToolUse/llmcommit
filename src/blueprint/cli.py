@@ -12,11 +12,14 @@ from blueprint.commit_generator import (
     create_commit,
 )
 
+DEFAULT_OLLAMA_MODEL = "llama3.1"
+DEFAULT_JAN_MODEL = "llama3.1-8b-instruct"
+
 
 def main():
     """Main entry point for the CLI application."""
-    OLLAMA_MODEL = os.getenv("OLLAMA_MODEL", "llama3.1")
-    JAN_MODEL = os.getenv("JAN_MODEL", "llama 3.1")
+    OLLAMA_MODEL = os.getenv("OLLAMA_MODEL", DEFAULT_OLLAMA_MODEL)
+    JAN_MODEL = os.getenv("JAN_MODEL", DEFAULT_JAN_MODEL)
 
     parser = argparse.ArgumentParser(
         description="Generate git commit messages using LLMs."
@@ -67,7 +70,7 @@ def main():
 
     # Show analytics if requested
     if args.analytics:
-        print(f"\nAnalytics:")
+        print("\nAnalytics:")
         print(
             f"Time taken to generate commit messages: {end_time - start_time:.2f} seconds"
         )
@@ -101,7 +104,7 @@ def main():
             end_time = time.time()
 
             if args.analytics:
-                print(f"\nRegeneration Analytics:")
+                print("\nRegeneration Analytics:")
                 print(
                     f"Time taken to regenerate commit messages: {end_time - start_time:.2f} seconds"
                 )

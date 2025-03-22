@@ -1,9 +1,7 @@
 """Git commit message generator using AI models."""
 
-import os
 import subprocess
 import sys
-import time
 from typing import List, Optional
 
 from blueprint.ai_service import AIService
@@ -73,7 +71,11 @@ def parse_commit_messages(response: str) -> List[str]:
     messages = []
     for line in response.split("\n"):
         if line.strip().startswith(("1.", "2.", "3.")):
-            messages.append(line.split(".", 1)[1].strip())
+            message = line.split(".", 1)[1].strip()
+            # Strip surrounding single quotes if present
+            if message.startswith("'") and message.endswith("'"):
+                message = message[1:-1]
+            messages.append(message)
     return messages
 
 

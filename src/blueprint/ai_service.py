@@ -1,9 +1,11 @@
 """AI Service module for interacting with different LLM providers."""
 
-import os
-from typing import Dict, Optional
+from typing import Optional
 
 import requests
+
+JAN_BASE_URL = "http://localhost:1337/v1/chat/completions"
+OLLAMA_BASE_URL = "http://localhost:11434/api/generate"
 
 
 class AIService:
@@ -21,8 +23,8 @@ class AIService:
 
         # Set up base URLs for services
         self.base_urls = {
-            "ollama": "http://localhost:11434/api/generate",
-            "jan": "http://localhost:1337/v1/chat/completions",
+            "ollama": OLLAMA_BASE_URL,
+            "jan": JAN_BASE_URL,
         }
 
         if service_type not in self.base_urls:
