@@ -3,7 +3,7 @@ requires = ["setuptools>=48", "setuptools_scm[toml]>=6.3.1"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "ai-commit"
+name = "llm-commit-generator"
 readme = "README.md"
 license = {text = "Apache-2.0"}
 requires-python = ">=3.10"
@@ -26,9 +26,9 @@ tests = [
 ]
 
 [project.urls]
-Documentation = "https://mozilla-ai.github.io/ai-commit/"
-Issues = "https://github.com/mozilla-ai/ai-commit/issues"
-Source = "https://github.com/mozilla-ai/ai-commit"
+Documentation = "https://tooluse.github.io/llmcommit/"
+Issues = "https://github.com/tooluse/llmcommit/issues"
+Source = "https://github.com/tooluse/llmcommit"
 
 [tool.setuptools.packages.find]
 exclude = ["tests", "tests.*"]
@@ -38,4 +38,4 @@ namespaces = false
 [tool.setuptools_scm]
 
 [project.scripts]
-ai-commit = "blueprint.cli:main"
+lcg = "blueprint.cli:main"

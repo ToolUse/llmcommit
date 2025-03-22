@@ -1,3 +1,3 @@
-"""AI Commit - AI-powered git commit message generator."""
+"""LLM Commit Generator - AI-powered git commit message generator."""
 
 __version__ = "0.1.0"

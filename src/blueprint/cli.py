@@ -1,4 +1,4 @@
-"""Command-line interface for AI-powered commit message generator."""
+"""Command-line interface for LLM-powered commit message generator."""
 
 import argparse
 import os

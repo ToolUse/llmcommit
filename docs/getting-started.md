@@ -1,4 +1,4 @@
-# Getting Started with AI Commit
+# Getting Started with LLM Commit Generator
 
 Get started with this Blueprint using one of the options below:
 
@@ -19,10 +19,10 @@ Before you begin, make sure you have:
 
 ### Install from PyPI
 
-The easiest way to install AI Commit is via pip:
+The easiest way to install LLM Commit Generator is via pip:
 
 ```bash
-pip install ai-commit
+pip install llm-commit-generator
 ```
 
 ### Install from Source
@@ -30,8 +30,8 @@ pip install ai-commit
 Alternatively, you can install from source:
 
 ```bash
-git clone https://github.com/mozilla-ai/ai-commit.git
-cd ai-commit
+git clone https://github.com/tooluse/llmcommit.git
+cd llmcommit
 pip install -e .
 ```
 
@@ -66,7 +66,7 @@ pip install -e .
 1. Make changes to your files in a git repository
 2. Run:
    ```bash
-   ai-commit
+   lcg
    ```
 3. Select one of the generated commit messages using the arrow keys or number keys
 4. Press Enter to commit with the selected message, or Esc to cancel
@@ -75,22 +75,22 @@ pip install -e .
 
 ```bash
 # Use Ollama instead of Jan AI
-ai-commit --ollama
+lcg --ollama
 
 # Show performance analytics
-ai-commit --analytics
+lcg --analytics
 
 # Use vim-style navigation in fzf
-ai-commit --vim
+lcg --vim
 
 # Use number selection for messages
-ai-commit --num
+lcg --num
 
 # Set the maximum characters for commit messages
-ai-commit --max_chars 100
+lcg --max_chars 100
 ```
 
 ## What's Next?
 
-- See the [Step-by-Step Guide](step-by-step-guide.md) to understand how AI Commit works
+- See the [Step-by-Step Guide](step-by-step-guide.md) to understand how LLM Commit Generator works
 - Learn about [customization options](customization.md) to tailor it to your needs

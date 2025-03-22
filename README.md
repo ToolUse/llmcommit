@@ -9,13 +9,13 @@
   </picture>
 </p>
 
-# AI Commit
+# LLM Commit Generator
 
 This blueprint guides you to easily generate AI-powered git commit messages based on your code changes. It uses local LLMs via Jan AI or Ollama to analyze git diffs and suggest concise, relevant commit messages.
 
 📘 To explore this project further and discover other Blueprints, visit the [**Blueprints Hub**](https://developer-hub.mozilla.ai/).
 
-👉 📖 For more detailed guidance on using this project, please visit our [**Docs here**](https://mozilla-ai.github.io/ai-commit/)
+👉 📖 For more detailed guidance on using this project, please visit our [**Docs here**](https://tooluse.github.io/llmcommit/)
 
 ### Built with
 
@@ -29,7 +29,7 @@ This blueprint guides you to easily generate AI-powered git commit messages base
 1. Make sure you have Git, Python 3.10+, and pip installed
 2. Install the package:
    ```bash
-   pip install ai-commit
+   pip install llm-commit-generator
    ```
 3. Choose one of the following local inference options:
 
@@ -49,13 +49,13 @@ This blueprint guides you to easily generate AI-powered git commit messages base
 4. Make changes to your git repo and run:
 
    ```bash
-   ai-commit
+   lcg
    ```
 
    For Ollama, use:
 
    ```bash
-   ai-commit --ollama
+   lcg --ollama
    ```
 
 ## How it Works

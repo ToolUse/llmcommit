@@ -6,7 +6,7 @@ This Blueprint is designed to be flexible and easily adaptable to your specific 
 
 ## 🧠 **Changing the Model**
 
-You can customize the AI models used by AI Commit:
+You can customize the AI models used by LLM Commit Generator:
 
 ### Jan AI Models (Default)
 
