@@ -410,7 +410,7 @@ def filter_diff(
 
 def generate_commit_messages(
     diff: str,
-    max_chars: int = 75,
+    max_chars: int = 100,
     service_type: str = "ollama",
     ollama_model: str = "llama3.1",
     jan_model: str = "Llama 3.1",

@@ -115,7 +115,13 @@ class AIService:
 
         data = {
             "model": self.model,
-            "messages": [{"role": "user", "content": prompt}],
+            "messages": [
+                {
+                    "role": "system",
+                    "content": "You are a commit message generator. You must only output exactly three lines describing the given diff.",
+                },
+                {"role": "user", "content": prompt},
+            ],
             "temperature": 0.01,
         }
 
