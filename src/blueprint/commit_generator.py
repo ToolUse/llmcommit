@@ -66,14 +66,13 @@ def trim_diff(diff: str, max_chars: int, debug: bool = False) -> str:
     lines = diff.split("\n")
     result_lines: list[str] = []
     current_length = 0
-    current_file = None
     in_hunk = False
 
     # First, count the number of actual change lines (+ or -) to prioritize
     change_lines_count = 0
     for line in lines:
         stripped = line.lstrip()
-        if (stripped.startswith("+") or stripped.startswith("-")) and not stripped in (
+        if (stripped.startswith("+") or stripped.startswith("-")) and stripped not in (
             "+",
             "-",
         ):
@@ -96,7 +95,7 @@ def trim_diff(diff: str, max_chars: int, debug: bool = False) -> str:
             # Mark change lines and surrounding context
             if (
                 stripped.startswith("+") or stripped.startswith("-")
-            ) and not stripped in ("+", "-"):
+            ) and stripped not in ("+", "-"):
                 # Mark this line and surrounding context (3 lines before and after)
                 for j in range(max(0, i - 3), min(len(lines), i + 4)):
                     important_indices.add(j)
@@ -123,7 +122,6 @@ def trim_diff(diff: str, max_chars: int, debug: bool = False) -> str:
                         )
                 else:
                     break
-            current_file = line
             in_hunk = False
 
         # Start of a new hunk
@@ -159,6 +157,65 @@ def trim_diff(diff: str, max_chars: int, debug: bool = False) -> str:
             )
 
     return result
+
+
+def filter_diff(
+    raw_diff: str, include_filenames: bool = True, debug: bool = False
+) -> str:
+    """Filter git diff to remove metadata and keep only meaningful changes.
+
+    Args:
+        raw_diff: Raw git diff output
+        include_filenames: Whether to keep filenames in the output
+        debug: Whether to enable debug logging
+
+    Returns:
+        Filtered diff with only relevant content
+    """
+    logger = logging.getLogger(__name__)
+    logger.debug("Filtering git diff to remove metadata")
+
+    if not raw_diff:
+        return ""
+
+    filtered_lines = []
+    current_file = None
+
+    for line in raw_diff.split("\n"):
+        # Skip common metadata lines
+        if line.startswith("diff --git") or line.startswith("index "):
+            continue
+
+        # Handle filename markers but keep the filename
+        if line.startswith("--- "):
+            continue
+        if line.startswith("+++ "):
+            if line.startswith("+++ b/") and include_filenames:
+                current_file = line[6:]  # Remove the "+++ b/" prefix
+            continue
+
+        # Add filename header if we just found a new file
+        if current_file and include_filenames:
+            filtered_lines.append(f"File: {current_file}")
+            current_file = None
+
+        # Keep everything else: hunk headers, context lines, and actual changes
+        filtered_lines.append(line)
+
+    filtered_diff = "\n".join(filtered_lines)
+
+    if debug:
+        logger.debug(
+            f"Original diff: {len(raw_diff)} chars, Filtered: {len(filtered_diff)} chars"
+        )
+        logger.debug(f"Removed {len(raw_diff) - len(filtered_diff)} chars of metadata")
+        logger.debug(
+            "Filtered diff preview (first 500 chars):\n" + filtered_diff[:500]
+            if filtered_diff
+            else "(empty)"
+        )
+
+    return filtered_diff
 
 
 def query_ai_service(
@@ -264,65 +321,6 @@ def create_commit(message: str, debug: bool = False) -> bool:
         logger.error(f"Failed to create commit: {e}")
         print("Error: Failed to create commit.")
         return False
-
-
-def filter_diff(
-    raw_diff: str, include_filenames: bool = True, debug: bool = False
-) -> str:
-    """Filter git diff to remove metadata and keep only meaningful changes.
-
-    Args:
-        raw_diff: Raw git diff output
-        include_filenames: Whether to keep filenames in the output
-        debug: Whether to enable debug logging
-
-    Returns:
-        Filtered diff with only relevant content
-    """
-    logger = logging.getLogger(__name__)
-    logger.debug("Filtering git diff to remove metadata")
-
-    if not raw_diff:
-        return ""
-
-    filtered_lines = []
-    current_file = None
-
-    for line in raw_diff.split("\n"):
-        # Skip common metadata lines
-        if line.startswith("diff --git") or line.startswith("index "):
-            continue
-
-        # Handle filename markers but keep the filename
-        if line.startswith("--- "):
-            continue
-        if line.startswith("+++ "):
-            if line.startswith("+++ b/") and include_filenames:
-                current_file = line[6:]  # Remove the "+++ b/" prefix
-            continue
-
-        # Add filename header if we just found a new file
-        if current_file and include_filenames:
-            filtered_lines.append(f"File: {current_file}")
-            current_file = None
-
-        # Keep everything else: hunk headers, context lines, and actual changes
-        filtered_lines.append(line)
-
-    filtered_diff = "\n".join(filtered_lines)
-
-    if debug:
-        logger.debug(
-            f"Original diff: {len(raw_diff)} chars, Filtered: {len(filtered_diff)} chars"
-        )
-        logger.debug(f"Removed {len(raw_diff) - len(filtered_diff)} chars of metadata")
-        logger.debug(
-            "Filtered diff preview (first 500 chars):\n" + filtered_diff[:500]
-            if filtered_diff
-            else "(empty)"
-        )
-
-    return filtered_diff
 
 
 def generate_commit_messages(
