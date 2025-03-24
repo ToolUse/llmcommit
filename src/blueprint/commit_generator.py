@@ -3,7 +3,7 @@
 import subprocess
 import sys
 import logging
-from typing import List, Optional
+from typing import List
 
 from blueprint.ai_service import AIService
 
@@ -240,82 +240,6 @@ def parse_commit_messages(response: str, debug: bool = False) -> List[str]:
 
     logger.debug(f"Parsed {len(messages)} commit messages")
     return messages
-
-
-def select_message_with_fzf(
-    messages: List[str],
-    use_vim: bool = False,
-    use_num: bool = False,
-    debug: bool = False,
-) -> Optional[str]:
-    """Use fzf to select a commit message, with option to regenerate.
-
-    Args:
-        messages: List of commit messages to select from
-        use_vim: Whether to use vim-style navigation
-        use_num: Whether to display numbers for selection
-        debug: Whether to enable debug logging
-
-    Returns:
-        Selected message, "regenerate" to regenerate messages, or None if cancelled
-    """
-    logger = logging.getLogger(__name__)
-    logger.debug("Displaying fzf selector for commit messages")
-
-    try:
-        messages.append("Regenerate messages")
-        fzf_args = [
-            "fzf",
-            "--height=10",
-            "--layout=reverse",
-            "--prompt=Select a commit message (ESC to cancel): ",
-            "--no-info",
-            "--margin=1,2",
-            "--border",
-            "--color=prompt:#D73BC9,pointer:#D73BC9",
-        ]
-
-        if use_vim:
-            fzf_args.extend(["--bind", "j:down,k:up"])
-            logger.debug("Using vim-style navigation in fzf")
-
-        if use_num:
-            for i, msg in enumerate(messages):
-                messages[i] = f"{i+1}. {msg}"
-            fzf_args.extend(
-                [
-                    "--bind",
-                    "1:accept-non-empty,2:accept-non-empty,3:accept-non-empty,4:accept-non-empty",
-                ]
-            )
-            logger.debug("Using number selection in fzf")
-
-        logger.debug(f"Displaying {len(messages)} options in fzf")
-        result = subprocess.run(
-            fzf_args,
-            input="\n".join(messages),
-            capture_output=True,
-            text=True,
-        )
-        if result.returncode == 130:  # User pressed ESC
-            logger.debug("User cancelled selection with ESC")
-            return None
-        selected = result.stdout.strip()
-        logger.debug(f"User selected: '{selected}'")
-
-        if selected == "Regenerate messages" or selected == "4. Regenerate messages":
-            logger.debug("User chose to regenerate messages")
-            return "regenerate"
-
-        final_selection = (
-            selected.split(". ", 1)[1] if use_num and selected else selected
-        )
-        logger.debug(f"Final selection: '{final_selection}'")
-        return final_selection
-    except subprocess.CalledProcessError as e:
-        logger.error(f"fzf selection failed: {e}")
-        print("Error: fzf selection failed.")
-        return None
 
 
 def create_commit(message: str, debug: bool = False) -> bool:
