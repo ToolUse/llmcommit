@@ -118,11 +118,11 @@ class AIService:
             "messages": [
                 {
                     "role": "system",
-                    "content": "You are a commit message generator. You must only output exactly three lines describing the given diff.",
+                    "content": "You are a commit message generator. You only summarize code in git diffs.",
                 },
                 {"role": "user", "content": prompt},
             ],
-            "temperature": 0.01,
+            "temperature": 0.2,
         }
 
         self.logger.debug(f"Sending request to Jan AI API at {url}")
