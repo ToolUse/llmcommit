@@ -15,7 +15,7 @@ from blueprint.commit_generator import (
 )
 
 DEFAULT_OLLAMA_MODEL = "llama3.1"
-DEFAULT_JAN_MODEL = "llama3.2-3b-instruct"
+DEFAULT_JAN_MODEL = "llama3.1-8b-instruct"
 
 
 def setup_logging(debug_mode):

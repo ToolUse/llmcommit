@@ -60,45 +60,6 @@ class AIService:
             self.logger.error(f"Unsupported service type: {self.service_type}")
             raise ValueError(f"Unsupported service type: {self.service_type}")
 
-    def _query_ollama(self, prompt: str) -> str:
-        """Send query to Ollama API.
-
-        Args:
-            prompt: The prompt text
-
-        Returns:
-            Generated text response
-        """
-        url = self.base_urls["ollama"]
-        data = {"model": self.model, "prompt": prompt, "stream": False}
-
-        self.logger.debug(f"Sending request to Ollama API at {url}")
-        if self.debug:
-            self.logger.debug(f"Request data: {data}")
-
-        try:
-            self.logger.debug("Making POST request to Ollama API")
-            response = requests.post(url, json=data)
-            self.logger.debug(
-                f"Received response with status code: {response.status_code}"
-            )
-
-            if self.debug:
-                self.logger.debug(f"Response headers: {response.headers}")
-
-            response.raise_for_status()
-            result = response.json()
-
-            if not result.get("response"):
-                self.logger.error(f"Unexpected response format from Ollama: {result}")
-                if self.debug:
-                    self.logger.debug(f"Full response: {result}")
-
-            return result.get("response", "")
-        except Exception as e:
-            self.logger.error(f"Error querying Ollama API: {e}")
-            raise Exception(f"Error querying Ollama API: {e}")
-
     def _query_jan(self, prompt: str) -> str:
         """Send query to Jan AI API.
 
@@ -153,3 +114,42 @@ class AIService:
         except Exception as e:
             self.logger.error(f"Error querying Jan AI API: {e}")
             raise Exception(f"Error querying Jan AI API: {e}")
+
+    def _query_ollama(self, prompt: str) -> str:
+        """Send query to Ollama API.
+
+        Args:
+            prompt: The prompt text
+
+        Returns:
+            Generated text response
+        """
+        url = self.base_urls["ollama"]
+        data = {"model": self.model, "prompt": prompt, "stream": False}
+
+        self.logger.debug(f"Sending request to Ollama API at {url}")
+        if self.debug:
+            self.logger.debug(f"Request data: {data}")
+
+        try:
+            self.logger.debug("Making POST request to Ollama API")
+            response = requests.post(url, json=data)
+            self.logger.debug(
+                f"Received response with status code: {response.status_code}"
+            )
+
+            if self.debug:
+                self.logger.debug(f"Response headers: {response.headers}")
+
+            response.raise_for_status()
+            result = response.json()
+
+            if not result.get("response"):
+                self.logger.error(f"Unexpected response format from Ollama: {result}")
+                if self.debug:
+                    self.logger.debug(f"Full response: {result}")
+
+            return result.get("response", "")
+        except Exception as e:
+            self.logger.error(f"Error querying Ollama API: {e}")
+            raise Exception(f"Error querying Ollama API: {e}")
