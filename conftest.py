@@ -1,6 +1,5 @@
 """Root conftest file to set up the Python path for testing."""
 
-import os
 import sys
 from pathlib import Path
 

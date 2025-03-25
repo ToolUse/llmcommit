@@ -114,7 +114,9 @@ class AIService:
             return content
         except requests.exceptions.ConnectionError as e:
             self.logger.error(f"Error connecting to Jan AI API: {e}")
-            raise Exception("Error connecting to Jan AI: Is Jan AI running on localhost:1337?")
+            raise Exception(
+                "Error connecting to Jan AI: Is Jan AI running on localhost:1337?"
+            )
         except requests.exceptions.Timeout as e:
             self.logger.error(f"Jan AI API request timed out: {e}")
             raise Exception("Jan AI request timed out. Service may be overloaded.")
@@ -160,10 +162,14 @@ class AIService:
             return result.get("response", "")
         except requests.exceptions.ConnectionError as e:
             self.logger.error(f"Error connecting to Ollama API: {e}")
-            raise Exception("Error connecting to Ollama: Is Ollama running on localhost:11434?")
+            raise Exception(
+                "Error connecting to Ollama: Is Ollama running on localhost:11434?"
+            )
         except requests.exceptions.Timeout as e:
             self.logger.error(f"Ollama API request timed out: {e}")
-            raise Exception("Ollama request timed out. Service may be overloaded or model is too large.")
+            raise Exception(
+                "Ollama request timed out. Service may be overloaded or model is too large."
+            )
         except Exception as e:
             self.logger.error(f"Error querying Ollama API: {e}")
             raise Exception(f"Error with Ollama: {str(e)[:100]}")

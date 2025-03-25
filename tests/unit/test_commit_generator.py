@@ -1,7 +1,6 @@
 """Tests for commit_generator.py."""
 
 import subprocess
-import sys
 from unittest import mock
 
 import pytest
@@ -104,7 +103,9 @@ def test_get_git_diff_staged_changes(mock_check_output):
 
     # Assert
     assert result == "staged changes diff"
-    mock_check_output.assert_called_with(["git", "diff", "--cached", "--diff-filter=ACMTU"], text=True)
+    mock_check_output.assert_called_with(
+        ["git", "diff", "--cached", "--diff-filter=ACMTU"], text=True
+    )
     assert mock_check_output.call_count == 1
 
 
@@ -138,7 +139,7 @@ def test_get_git_diff_max_chars(mock_trim_diff, mock_check_output):
     # Setup
     mock_check_output.return_value = "a" * 100  # Return a long string
     mock_trim_diff.return_value = "a" * 50  # Mocked trimmed output
-    
+
     # Execute
     result = get_git_diff(max_chars=50)
 
@@ -191,6 +192,7 @@ def test_query_ai_service_jan(mock_ai_service):
     assert result == "AI response"
     mock_ai_service.assert_called_with("jan", model="Llama 3.1", debug=False)
     mock_instance.query.assert_called_with("test prompt")
+
 
 @mock.patch("blueprint.commit_generator.AIService")
 def test_query_ai_service_error(mock_ai_service):
@@ -374,7 +376,7 @@ def test_generate_commit_messages(mock_query_ai_service, sample_git_diff):
     ]
     # Verify the prompt includes the specified max characters
     assert (
-        f"Please keep it under 75 characters per message"
+        "Please keep it under 75 characters per message"
         in mock_query_ai_service.call_args[0][0]
     )
     # Verify the diff is included in the prompt
@@ -408,7 +410,7 @@ def test_generate_commit_messages_custom_service(mock_query_ai_service):
     )
     # Verify the prompt includes the custom max characters
     assert (
-        f"Please keep it under 100 characters per message"
+        "Please keep it under 100 characters per message"
         in mock_query_ai_service.call_args[0][0]
     )
 

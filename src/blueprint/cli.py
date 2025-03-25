@@ -65,7 +65,7 @@ def select_message_with_fzf(
 
         if use_num:
             for i, msg in enumerate(messages):
-                messages[i] = f"{i+1}. {msg}"
+                messages[i] = f"{i + 1}. {msg}"
             fzf_args.extend(
                 [
                     "--bind",
