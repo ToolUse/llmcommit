@@ -92,7 +92,8 @@ class AIService:
 
         try:
             self.logger.debug("Making POST request to Jan AI API")
-            response = requests.post(url, headers=headers, json=data)
+            # Add timeout parameter to prevent hanging
+            response = requests.post(url, headers=headers, json=data, timeout=60)
             self.logger.debug(
                 f"Received response with status code: {response.status_code}"
             )
@@ -111,9 +112,15 @@ class AIService:
 
             content = result["choices"][0]["message"]["content"]
             return content
+        except requests.exceptions.ConnectionError as e:
+            self.logger.error(f"Error connecting to Jan AI API: {e}")
+            raise Exception("Error connecting to Jan AI: Is Jan AI running on localhost:1337?")
+        except requests.exceptions.Timeout as e:
+            self.logger.error(f"Jan AI API request timed out: {e}")
+            raise Exception("Jan AI request timed out. Service may be overloaded.")
         except Exception as e:
             self.logger.error(f"Error querying Jan AI API: {e}")
-            raise Exception(f"Error querying Jan AI API: {e}")
+            raise Exception(f"Error with Jan AI: {str(e)[:100]}")
 
     def _query_ollama(self, prompt: str) -> str:
         """Send query to Ollama API.
@@ -133,7 +140,8 @@ class AIService:
 
         try:
             self.logger.debug("Making POST request to Ollama API")
-            response = requests.post(url, json=data)
+            # Add timeout parameter to prevent hanging
+            response = requests.post(url, json=data, timeout=60)
             self.logger.debug(
                 f"Received response with status code: {response.status_code}"
             )
@@ -150,6 +158,12 @@ class AIService:
                     self.logger.debug(f"Full response: {result}")
 
             return result.get("response", "")
+        except requests.exceptions.ConnectionError as e:
+            self.logger.error(f"Error connecting to Ollama API: {e}")
+            raise Exception("Error connecting to Ollama: Is Ollama running on localhost:11434?")
+        except requests.exceptions.Timeout as e:
+            self.logger.error(f"Ollama API request timed out: {e}")
+            raise Exception("Ollama request timed out. Service may be overloaded or model is too large.")
         except Exception as e:
             self.logger.error(f"Error querying Ollama API: {e}")
-            raise Exception(f"Error querying Ollama API: {e}")
+            raise Exception(f"Error with Ollama: {str(e)[:100]}")

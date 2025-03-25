@@ -22,8 +22,31 @@ trap stopRunningProcess EXIT TERM
 
 # Add streamlit to dependencies for the demo
 pip install streamlit
+pip install -e . 
 
-streamlit run ${HOME}/blueprint/demo/app.py &
-APP_ID=${!}
+# First look for app.py in the same directory as this script
+SCRIPT_DIR="$(dirname "$0")"
+APP_PATH="$SCRIPT_DIR/app.py"
 
-wait ${APP_ID}
+# Fall back to original path if not found
+if [ ! -f "$APP_PATH" ]; then
+    echo "Looking for app.py in ${HOME}/blueprint/demo/"
+    APP_PATH="${HOME}/blueprint/demo/app.py"
+    
+    # Finally try current directory
+    if [ ! -f "$APP_PATH" ]; then
+        echo "Looking for app.py in current directory"
+        APP_PATH="./app.py"
+        
+        if [ ! -f "$APP_PATH" ]; then
+            echo "Error: Could not find app.py in any location"
+            exit 1
+        fi
+    fi
+fi
+
+echo "Found app.py at: $APP_PATH"
+streamlit run "$APP_PATH" &
+APP_PID=$!
+
+wait $APP_PID

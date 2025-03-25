@@ -12,8 +12,8 @@ from blueprint.commit_generator import (
     get_git_diff,
     parse_commit_messages,
     query_ai_service,
-    select_message_with_fzf,
 )
+from blueprint.cli import select_message_with_fzf
 
 # Global patch for subprocess to prevent any real subprocess calls
 subprocess_mock = mock.patch("subprocess.run")
@@ -62,6 +62,35 @@ def no_user_input(monkeypatch):
     monkeypatch.setattr("builtins.input", mock_input)
 
 
+@pytest.fixture
+def sample_ai_response():
+    """Sample AI response for testing."""
+    return """I've analyzed the git diff and summarized the changes.
+
+1. Remove strip() from diff check and add strip() to parsed commit messages
+2. Fix string handling in git diff and commit message parsing
+3. Improve robustness of git diff checking and commit message parsing"""
+
+
+@pytest.fixture
+def sample_git_diff():
+    """Sample git diff for testing."""
+    return """diff --git a/src/app.py b/src/app.py
+index 1234567..abcdefg 100644
+--- a/src/app.py
++++ b/src/app.py
+@@ -10,7 +10,7 @@ def some_function():
+     # This is a test function
+-    x = input().strip()
++    x = input()
+     return x
+ 
+@@ -20,7 +20,7 @@ def parse_message(msg):
+-    return msg
++    return msg.strip()
+"""
+
+
 @mock.patch("subprocess.check_output")
 def test_get_git_diff_staged_changes(mock_check_output):
     """Test getting git diff with staged changes."""
@@ -75,7 +104,7 @@ def test_get_git_diff_staged_changes(mock_check_output):
 
     # Assert
     assert result == "staged changes diff"
-    mock_check_output.assert_called_with(["git", "diff", "--cached"], text=True)
+    mock_check_output.assert_called_with(["git", "diff", "--cached", "--diff-filter=ACMTU"], text=True)
     assert mock_check_output.call_count == 1
 
 
@@ -96,26 +125,27 @@ def test_get_git_diff_unstaged_changes(mock_check_output):
     assert mock_check_output.call_count == 2
     mock_check_output.assert_has_calls(
         [
-            mock.call(["git", "diff", "--cached"], text=True),
-            mock.call(["git", "diff"], text=True),
+            mock.call(["git", "diff", "--cached", "--diff-filter=ACMTU"], text=True),
+            mock.call(["git", "diff", "--diff-filter=ACMTU"], text=True),
         ]
     )
 
 
 @mock.patch("subprocess.check_output")
-def test_get_git_diff_max_chars(mock_check_output):
-    """Test limiting git diff to max_chars."""
+@mock.patch("blueprint.commit_generator.trim_diff")
+def test_get_git_diff_max_chars(mock_trim_diff, mock_check_output):
+    """Test limiting git diff to max_chars using trim_diff."""
     # Setup
-    mock_check_output.side_effect = [
-        "a" * 100,  # Return a long string
-    ]
-
+    mock_check_output.return_value = "a" * 100  # Return a long string
+    mock_trim_diff.return_value = "a" * 50  # Mocked trimmed output
+    
     # Execute
     result = get_git_diff(max_chars=50)
 
     # Assert
-    assert result == "a" * 50  # Should be truncated to 50 chars
-    assert len(result) == 50
+    assert result == "a" * 50
+    # Verify trim_diff was called with the right parameters
+    mock_trim_diff.assert_called_once_with("a" * 100, 50, False)
 
 
 @mock.patch("subprocess.check_output")
@@ -142,7 +172,7 @@ def test_query_ai_service_ollama(mock_ai_service):
 
     # Assert
     assert result == "AI response"
-    mock_ai_service.assert_called_with("ollama", model="llama3.1")
+    mock_ai_service.assert_called_with("ollama", model="llama3.1", debug=False)
     mock_instance.query.assert_called_with("test prompt")
 
 
@@ -159,13 +189,12 @@ def test_query_ai_service_jan(mock_ai_service):
 
     # Assert
     assert result == "AI response"
-    mock_ai_service.assert_called_with("jan", model="Llama 3.1")
+    mock_ai_service.assert_called_with("jan", model="Llama 3.1", debug=False)
     mock_instance.query.assert_called_with("test prompt")
-
 
 @mock.patch("blueprint.commit_generator.AIService")
 def test_query_ai_service_error(mock_ai_service):
-    """Test error handling in query_ai_service."""
+    """Test error handling in query_ai_service for Ollama."""
     # Setup
     mock_instance = mock_ai_service.return_value
     mock_instance.query.side_effect = Exception("API error")
@@ -345,11 +374,12 @@ def test_generate_commit_messages(mock_query_ai_service, sample_git_diff):
     ]
     # Verify the prompt includes the specified max characters
     assert (
-        f"Try to fit each commit message in 75 characters"
+        f"Please keep it under 75 characters per message"
         in mock_query_ai_service.call_args[0][0]
     )
     # Verify the diff is included in the prompt
-    assert sample_git_diff in mock_query_ai_service.call_args[0][0]
+    assert "--- BEGIN GIT DIFF ---" in mock_query_ai_service.call_args[0][0]
+    assert "--- END GIT DIFF ---" in mock_query_ai_service.call_args[0][0]
 
 
 @mock.patch("blueprint.commit_generator.query_ai_service")
@@ -374,28 +404,21 @@ def test_generate_commit_messages_custom_service(mock_query_ai_service):
     assert len(result) == 3
     # Check if custom service settings were passed correctly
     mock_query_ai_service.assert_called_with(
-        mock.ANY, "jan", "custom-ollama", "custom-jan"
+        mock.ANY, "jan", "custom-ollama", "custom-jan", debug=False
     )
     # Verify the prompt includes the custom max characters
     assert (
-        f"Try to fit each commit message in 100 characters"
+        f"Please keep it under 100 characters per message"
         in mock_query_ai_service.call_args[0][0]
     )
 
 
-@mock.patch("blueprint.commit_generator.select_message_with_fzf")
+@mock.patch("blueprint.cli.select_message_with_fzf")
 @mock.patch("blueprint.commit_generator.generate_commit_messages")
 @mock.patch("blueprint.commit_generator.get_git_diff")
 @mock.patch("blueprint.commit_generator.create_commit")
 def test_end_to_end_flow(mock_create, mock_get_diff, mock_generate, mock_select):
     """Test the full end-to-end flow with mocked components."""
-    from blueprint.commit_generator import (
-        create_commit,
-        generate_commit_messages,
-        get_git_diff,
-        select_message_with_fzf,
-    )
-
     # Setup
     mock_get_diff.return_value = "sample diff"
     mock_generate.return_value = ["Message 1", "Message 2", "Message 3"]

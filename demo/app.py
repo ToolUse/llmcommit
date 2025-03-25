@@ -16,10 +16,9 @@ st.subheader("Generate commit messages with AI")
 
 # Add sidebar with options
 st.sidebar.title("Settings")
-service_type = st.sidebar.radio("Select AI Service", ["ollama", "groq"])
+service_type = st.sidebar.radio("Select AI Service", ["ollama", "jan"])
 max_chars = st.sidebar.slider("Max Characters", 20, 150, 75)
 ollama_model = st.sidebar.text_input("Ollama Model", "llama3.1")
-groq_model = st.sidebar.text_input("Groq Model", "llama-3.1-70b-versatile")
 
 # Main content
 git_diff = st.text_area("Paste your git diff here:", height=300)
@@ -34,7 +33,6 @@ if st.button("Generate Commit Messages"):
                     max_chars=max_chars,
                     service_type=service_type,
                     ollama_model=ollama_model,
-                    groq_model=groq_model,
                 )
 
                 # Display results
