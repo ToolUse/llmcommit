@@ -6,6 +6,7 @@ import logging
 from typing import List
 
 from blueprint.ai_service import AIService
+from blueprint.prompts import get_commit_message_prompt
 
 
 def get_git_diff(max_chars: int = 5000, debug: bool = False) -> str:
@@ -328,7 +329,7 @@ def generate_commit_messages(
     max_chars: int = 200,
     service_type: str = "ollama",
     ollama_model: str = "llama3.1",
-    jan_model: str = "Llama 3.1",
+    jan_model: str = "llama3.2-3b-instruct",
     debug: bool = False,
 ) -> List[str]:
     """Generate commit messages based on git diff.
@@ -356,17 +357,7 @@ def generate_commit_messages(
         if not filtered_diff:
             logger.warning("FILTERED DIFF is empty")
 
-    prompt = f"""
-First, describe everything that is accomplished in the GIT DIFF in a single paragraph. 
-Then convert the paragraph into a good git commit message. It should summarize the entire diff, be a good writer.
-Repeat this 3 times. 
-Return these sentences as a numbered list (example: "1. ", "2. ", or "3. ").
-Please keep it under {max_chars} characters per message.
-Here is the GIT DIFF:
---- BEGIN GIT DIFF ---
-{filtered_diff}
---- END GIT DIFF ---
-"""
+    prompt = get_commit_message_prompt(diff, max_chars)
 
     logger.debug(f"Created prompt with length {len(prompt)} chars")
     if debug:
