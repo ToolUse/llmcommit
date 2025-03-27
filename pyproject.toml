@@ -36,6 +36,11 @@ where = ["src"]
 namespaces = false
 
 [tool.setuptools_scm]
+version_scheme = "guess-next-dev"
+local_scheme = "no-local-version"
 
 [project.scripts]
 lcm = "llm_commit_generator.cli:main"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
