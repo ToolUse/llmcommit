@@ -5,14 +5,14 @@ from unittest import mock
 
 import pytest
 
-from blueprint.commit_generator import (
+from llm_commit_generator.commit_generator import (
     create_commit,
     generate_commit_messages,
     get_git_diff,
     parse_commit_messages,
     query_ai_service,
 )
-from blueprint.cli import select_message_with_fzf
+from llm_commit_generator.cli import select_message_with_fzf
 
 # Global patch for subprocess to prevent any real subprocess calls
 subprocess_mock = mock.patch("subprocess.run")

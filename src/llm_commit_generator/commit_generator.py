@@ -5,8 +5,8 @@ import sys
 import logging
 from typing import List
 
-from blueprint.ai_service import AIService
-from blueprint.prompts import get_commit_message_prompt
+from llm_commit_generator.ai_service import AIService
+from llm_commit_generator.prompts import get_commit_message_prompt
 
 
 def get_git_diff(max_chars: int = 5000, debug: bool = False) -> str:

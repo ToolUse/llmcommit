@@ -8,13 +8,13 @@ import logging
 import subprocess
 from typing import List, Optional
 
-from blueprint.commit_generator import (
+from llm_commit_generator.commit_generator import (
     get_git_diff,
     generate_commit_messages,
     create_commit,
 )
 
-DEFAULT_OLLAMA_MODEL = "llama3.1"
+DEFAULT_OLLAMA_MODEL = "qwen2.5:3b"
 DEFAULT_JAN_MODEL = "llama3.2-3b-instruct"
 
 

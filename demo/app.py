@@ -1,7 +1,7 @@
 """Demo application for AI Commit Blueprint."""
 
 import streamlit as st
-from blueprint.commit_generator import generate_commit_messages
+from llm_commit_generator.commit_generator import generate_commit_messages
 
 # Set page config
 st.set_page_config(
